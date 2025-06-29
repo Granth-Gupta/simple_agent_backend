@@ -305,10 +305,10 @@ app = Flask(__name__)
 # Configure CORS for Render deployment
 CORS(app, origins=[
     "https://simple-agent-frontend.onrender.com",
-    "http://localhost:3000",  # For local development
-    "http://localhost:5173",  # For Vite dev server
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173"
+    # "http://localhost:3000",  # For local development
+    # "http://localhost:5173",  # For Vite dev server
+    # "http://127.0.0.1:3000",
+    # "http://127.0.0.1:5173"
 ], supports_credentials=True)
 
 # Add security headers
