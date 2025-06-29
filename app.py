@@ -301,8 +301,23 @@ agent = FirecrawlAgent()
 
 # Flask app setup
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
 
+# Configure CORS for Render deployment
+CORS(app, origins=[
+    "https://simple-agent-frontend.onrender.com",
+    "http://localhost:3000",  # For local development
+    "http://localhost:5173",  # For Vite dev server
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173"
+], supports_credentials=True)
+
+# Add security headers
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 def run_async_in_thread(coro):
     """Run async function in the event loop"""
@@ -318,7 +333,8 @@ def health_check():
     """Health check endpoint"""
     return jsonify({
         "status": "healthy" if agent._initialized else "initializing",
-        "tools_available": len(agent.tools) if agent.tools else 0
+        "tools_available": len(agent.tools) if agent.tools else 0,
+        "environment": "production" if os.getenv("RENDER") else "development"
     })
 
 
@@ -381,6 +397,22 @@ def chat():
         }), 500
 
 
+@app.route('/', methods=['GET'])
+def index():
+    """Root endpoint with service info"""
+    return jsonify({
+        "service": "AI Agent Backend",
+        "status": "running",
+        "version": "1.0.0",
+        "initialized": agent._initialized,
+        "endpoints": {
+            "health": "/health",
+            "tools": "/tools", 
+            "chat": "/chat"
+        }
+    })
+
+
 async def initialize_agent():
     """Initialize the agent in the background"""
     try:
@@ -414,17 +446,22 @@ if __name__ == "__main__":
     import time
     time.sleep(2)
     
+    # Get port from environment or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    
     # Start Flask app
     try:
-        print("🚀 Starting Flask server on http://localhost:5000")
+        print(f"🚀 Starting Flask server on port {port}")
         print("📡 Available endpoints:")
+        print("  GET  /       - Service info")
         print("  GET  /health - Health check")
         print("  GET  /tools  - Get available tools")
         print("  POST /chat   - Chat with the agent")
         print("-" * 50)
         print("🤖 AI Agent is ready to help!")
         
-        app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+        # Use 0.0.0.0 for Render deployment
+        app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
     except KeyboardInterrupt:
         logger.info("Shutting down Flask server...")
         # Signal the event loop to stop
