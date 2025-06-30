@@ -4,8 +4,9 @@ import logging
 import json
 from typing import Optional, Dict, List, Any
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import threading
 import warnings
 import sys
@@ -45,6 +46,25 @@ class ToolError(Exception):
 class ConfigurationError(Exception):
     """Custom exception for configuration errors"""
     pass
+
+# Pydantic models for request/response
+class ChatRequest(BaseModel):
+    message: str
+    history: List[Dict] = []
+
+class ChatResponse(BaseModel):
+    success: bool = True
+    ai_message: str = ""
+    tool_calls: List[Dict] = []
+    tool_outputs: List[Dict] = []
+    error: Optional[str] = None
+
+class HealthResponse(BaseModel):
+    status: str
+    tools_available: int
+
+class ToolsResponse(BaseModel):
+    tools: List[str]
 
 
 class FirecrawlAgent:
@@ -299,118 +319,91 @@ Remember: Chat users prefer scannable, actionable responses over dense academic 
 # Global agent instance
 agent = FirecrawlAgent()
 
-# Flask app setup
-app = Flask(__name__)
+# FastAPI app setup
+app = FastAPI(
+    title="AI Agent API",
+    description="AI Agent powered by Gemini LLM and Firecrawl tools",
+    version="1.0.0"
+)
 
-# Configure CORS for Render deployment
-CORS(app, origins=[
-    "https://simple-agent-frontend.onrender.com",
-    # "http://localhost:3000",  # For local development
-    # "http://localhost:5173",  # For Vite dev server
-    # "http://127.0.0.1:3000",
-    # "http://127.0.0.1:5173"
-], supports_credentials=True)
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your frontend domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Add security headers
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
 
-def run_async_in_thread(coro):
-    """Run async function in the event loop"""
+async def run_async_task(coro):
+    """Run async function safely"""
     if agent._loop is None:
         return None
     
     future = asyncio.run_coroutine_threadsafe(coro, agent._loop)
-    return future.result(timeout=130.0)  # Give a bit more time than agent timeout
+    return await asyncio.wrap_future(future)
 
 
-@app.route('/health', methods=['GET'])
-def health_check():
+@app.get('/health', response_model=HealthResponse)
+async def health_check():
     """Health check endpoint"""
-    return jsonify({
-        "status": "healthy" if agent._initialized else "initializing",
-        "tools_available": len(agent.tools) if agent.tools else 0,
-        "environment": "production" if os.getenv("RENDER") else "development"
-    })
+    return HealthResponse(
+        status="healthy" if agent._initialized else "initializing",
+        tools_available=len(agent.tools) if agent.tools else 0
+    )
 
 
-@app.route('/tools', methods=['GET'])
-def get_tools():
+@app.get('/tools', response_model=ToolsResponse)
+async def get_tools():
     """Get available tools"""
-    return jsonify({
-        "tools": agent.get_available_tools()
-    })
+    return ToolsResponse(tools=agent.get_available_tools())
 
 
-@app.route('/chat', methods=['POST'])
-def chat():
+@app.post('/chat', response_model=ChatResponse)
+async def chat(request: ChatRequest):
     """Main chat endpoint"""
     try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-        
-        user_message = data.get('message', '')
-        history = data.get('history', [])
-        
-        if not user_message.strip():
-            return jsonify({"error": "Empty message"}), 400
+        if not request.message.strip():
+            raise HTTPException(status_code=400, detail="Empty message")
         
         # Check if agent is initialized
         if not agent._initialized:
-            return jsonify({
-                "error": "Agent is not initialized",
-                "ai_message": "🚀 **Starting Up**\n\nI'm still getting my tools ready! Give me a moment and try again.\n\n• Loading web scraping capabilities\n• Connecting to Firecrawl services\n• Preparing AI models"
-            }), 503
+            return ChatResponse(
+                success=False,
+                error="Agent is not initialized",
+                ai_message="🚀 **Starting Up**\n\nI'm still getting my tools ready! Give me a moment and try again.\n\n• Loading web scraping capabilities\n• Connecting to Firecrawl services\n• Preparing AI models"
+            )
         
         # Process message
         try:
-            result = run_async_in_thread(
-                agent.process_message_async(user_message, history)
+            result = await run_async_task(
+                agent.process_message_async(request.message, request.history)
             )
             
             if result is None:
-                return jsonify({
-                    "error": "Failed to process message",
-                    "ai_message": "🔧 **Technical Difficulties**\n\nI'm having some issues right now. Please try again in a moment!\n\n• System is recovering\n• Tools are reconnecting\n• Should be back shortly"
-                }), 500
+                return ChatResponse(
+                    success=False,
+                    error="Failed to process message",
+                    ai_message="🔧 **Technical Difficulties**\n\nI'm having some issues right now. Please try again in a moment!\n\n• System is recovering\n• Tools are reconnecting\n• Should be back shortly"
+                )
             
-            return jsonify(result)
+            return ChatResponse(**result)
             
         except Exception as e:
             logger.error(f"Error processing chat message: {e}")
-            return jsonify({
-                "error": str(e),
-                "ai_message": f"⚠️ **Technical Issue**\n\nSomething went wrong: {str(e)}\n\n**Try this:**\n• Rephrase your question\n• Try a simpler request\n• Wait a moment and try again"
-            }), 500
+            return ChatResponse(
+                success=False,
+                error=str(e),
+                ai_message=f"⚠️ **Technical Issue**\n\nSomething went wrong: {str(e)}\n\n**Try this:**\n• Rephrase your question\n• Try a simpler request\n• Wait a moment and try again"
+            )
     
     except Exception as e:
         logger.error(f"Error in chat endpoint: {e}")
-        return jsonify({
-            "error": "Internal server error",
-            "ai_message": "🛠️ **System Error**\n\nI'm experiencing technical difficulties right now.\n\n• Please try again in a moment\n• The issue should resolve automatically\n• Contact support if this persists"
-        }), 500
-
-
-@app.route('/', methods=['GET'])
-def index():
-    """Root endpoint with service info"""
-    return jsonify({
-        "service": "AI Agent Backend",
-        "status": "running",
-        "version": "1.0.0",
-        "initialized": agent._initialized,
-        "endpoints": {
-            "health": "/health",
-            "tools": "/tools", 
-            "chat": "/chat"
-        }
-    })
+        raise HTTPException(
+            status_code=500,
+            detail="Internal server error"
+        )
 
 
 async def initialize_agent():
@@ -437,7 +430,9 @@ def run_event_loop():
         agent._loop.close()
 
 
-if __name__ == "__main__":
+@app.on_event("startup")
+async def startup_event():
+    """Initialize agent on startup"""
     # Start the event loop in a separate thread
     event_loop_thread = threading.Thread(target=run_event_loop, daemon=True)
     event_loop_thread.start()
@@ -446,33 +441,41 @@ if __name__ == "__main__":
     import time
     time.sleep(2)
     
-    # Get port from environment or default to 5000
-    port = int(os.environ.get('PORT', 5000))
+    logger.info("🚀 FastAPI server starting up")
+    logger.info("📡 Available endpoints:")
+    logger.info("  GET  /health - Health check")
+    logger.info("  GET  /tools  - Get available tools")
+    logger.info("  POST /chat   - Chat with the agent")
+    logger.info("-" * 50)
+    logger.info("🤖 AI Agent is ready to help!")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("Shutting down FastAPI server...")
+    # Signal the event loop to stop
+    if agent._loop:
+        agent._loop.call_soon_threadsafe(agent._loop.stop)
     
-    # Start Flask app
-    try:
-        print(f"🚀 Starting Flask server on port {port}")
-        print("📡 Available endpoints:")
-        print("  GET  /       - Service info")
-        print("  GET  /health - Health check")
-        print("  GET  /tools  - Get available tools")
-        print("  POST /chat   - Chat with the agent")
-        print("-" * 50)
-        print("🤖 AI Agent is ready to help!")
-        
-        # Use 0.0.0.0 for Render deployment
-        app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
-    except KeyboardInterrupt:
-        logger.info("Shutting down Flask server...")
-        # Signal the event loop to stop
-        if agent._loop:
-            agent._loop.call_soon_threadsafe(agent._loop.stop)
-    except Exception as e:
-        logger.error(f"Error starting Flask server: {e}")
-    finally:
-        # Cleanup
-        if agent._loop:
-            try:
-                asyncio.run_coroutine_threadsafe(agent.cleanup(), agent._loop).result(timeout=5.0)
-            except Exception as e:
-                logger.warning(f"Error during cleanup: {e}")
+    # Cleanup
+    if agent._loop:
+        try:
+            await run_async_task(agent.cleanup())
+        except Exception as e:
+            logger.warning(f"Error during cleanup: {e}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    # Get port from environment variable, default to 8000
+    port = int(os.getenv("PORT", 8000))
+    
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=port,
+        reload=False,
+        log_level="info"
+    )

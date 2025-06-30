@@ -1,0 +1,98 @@
+2025-06-30 05:09:55,535 - INFO - Model initialized successfully
+2025-06-30 05:09:55,690 - INFO - MCP client initialized successfully
+2025-06-30 05:09:56,937 - INFO - MCP session initialized successfully
+2025-06-30 05:09:56,941 - INFO - Loaded 8 tools successfully
+2025-06-30 05:09:56,977 - INFO - Agent created successfully
+2025-06-30 05:09:56,977 - INFO - Agent initialized successfully for web server
+2025-06-30 05:09:57,515 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.65:5000
+2025-06-30 05:09:57,516 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-30 05:12:06,296 - INFO - Starting cleanup process...
+2025-06-30 05:12:06,297 - WARNING - Error closing session: Attempted to exit cancel scope in a different task than it was entered in
+2025-06-30 05:12:06,325 - WARNING - Error closing MCP client: Attempted to exit cancel scope in a different task than it was entered in
+2025-06-30 05:12:12,675 - INFO - Model initialized successfully
+2025-06-30 05:12:12,803 - INFO - MCP client initialized successfully
+2025-06-30 05:12:14,073 - INFO - MCP session initialized successfully
+2025-06-30 05:12:14,077 - INFO - Loaded 8 tools successfully
+2025-06-30 05:12:14,089 - INFO - Agent created successfully
+2025-06-30 05:12:14,089 - INFO - Agent initialized successfully for web server
+2025-06-30 05:12:14,668 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.65:5000
+2025-06-30 05:12:14,669 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-30 05:13:17,021 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:17] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 05:13:17,022 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:17] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 05:13:17,282 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:17] "GET /tools HTTP/1.1" 200 -
+2025-06-30 05:13:17,343 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:17] "GET /tools HTTP/1.1" 200 -
+2025-06-30 05:13:22,245 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:22] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 05:13:25,108 - INFO - 127.0.0.1 - - [30/Jun/2025 05:13:25] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:50:12,405 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:12] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 12:50:12,415 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:12] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 12:50:12,659 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:12] "GET /tools HTTP/1.1" 200 -
+2025-06-30 12:50:12,771 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:12] "GET /tools HTTP/1.1" 200 -
+2025-06-30 12:50:25,190 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:25] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 12:50:25,191 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:25] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 12:50:25,448 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:25] "GET /tools HTTP/1.1" 200 -
+2025-06-30 12:50:25,509 - INFO - 127.0.0.1 - - [30/Jun/2025 12:50:25] "GET /tools HTTP/1.1" 200 -
+2025-06-30 12:52:11,131 - INFO - 127.0.0.1 - - [30/Jun/2025 12:52:11] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:52:13,858 - INFO - 127.0.0.1 - - [30/Jun/2025 12:52:13] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:54:47,617 - INFO - 127.0.0.1 - - [30/Jun/2025 12:54:47] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:54:49,390 - INFO - 127.0.0.1 - - [30/Jun/2025 12:54:49] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:55:16,963 - INFO - 127.0.0.1 - - [30/Jun/2025 12:55:16] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:55:18,313 - INFO - 127.0.0.1 - - [30/Jun/2025 12:55:18] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:55:28,876 - INFO - 127.0.0.1 - - [30/Jun/2025 12:55:28] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:55:41,864 - INFO - Tool used: firecrawl_search
+2025-06-30 12:55:41,865 - INFO - Tool output from firecrawl_search: 73490 characters
+2025-06-30 12:55:41,866 - INFO - 127.0.0.1 - - [30/Jun/2025 12:55:41] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:58:06,882 - INFO - 127.0.0.1 - - [30/Jun/2025 12:58:06] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:58:08,979 - INFO - 127.0.0.1 - - [30/Jun/2025 12:58:08] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:58:26,319 - INFO - 127.0.0.1 - - [30/Jun/2025 12:58:26] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:58:27,680 - INFO - 127.0.0.1 - - [30/Jun/2025 12:58:27] "POST /chat HTTP/1.1" 200 -
+2025-06-30 12:59:14,617 - INFO - 127.0.0.1 - - [30/Jun/2025 12:59:14] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 12:59:27,128 - INFO - Tool used: firecrawl_search
+2025-06-30 12:59:27,129 - INFO - Tool output from firecrawl_search: 264 characters
+2025-06-30 12:59:27,130 - INFO - Tool used: firecrawl_map
+2025-06-30 12:59:27,130 - INFO - Tool output from firecrawl_map: 72 characters
+2025-06-30 12:59:27,130 - INFO - Tool used: firecrawl_search
+2025-06-30 12:59:27,131 - INFO - Tool output from firecrawl_search: 877 characters
+2025-06-30 12:59:27,132 - INFO - 127.0.0.1 - - [30/Jun/2025 12:59:27] "POST /chat HTTP/1.1" 200 -
+2025-06-30 13:01:59,035 - INFO - 127.0.0.1 - - [30/Jun/2025 13:01:59] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 13:02:07,792 - INFO - Tool used: firecrawl_scrape
+2025-06-30 13:02:07,793 - INFO - Tool output from firecrawl_scrape: 3231 characters
+2025-06-30 13:02:07,794 - INFO - 127.0.0.1 - - [30/Jun/2025 13:02:07] "POST /chat HTTP/1.1" 200 -
+2025-06-30 13:09:59,167 - INFO - Starting cleanup process...
+2025-06-30 13:09:59,168 - WARNING - Error closing session: Attempted to exit cancel scope in a different task than it was entered in
+2025-06-30 13:09:59,208 - WARNING - Error closing MCP client: Attempted to exit cancel scope in a different task than it was entered in
+2025-06-30 13:10:07,548 - INFO - Model initialized successfully
+2025-06-30 13:10:07,726 - INFO - MCP client initialized successfully
+2025-06-30 13:10:09,556 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.29.65:5000
+2025-06-30 13:10:09,557 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-30 13:10:10,492 - INFO - MCP session initialized successfully
+2025-06-30 13:10:10,499 - INFO - Loaded 8 tools successfully
+2025-06-30 13:10:10,517 - INFO - Agent created successfully
+2025-06-30 13:10:10,518 - INFO - Agent initialized successfully for web server
+2025-06-30 13:10:11,232 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:11] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:10:11,233 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:11] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:10:11,497 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:11] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:11,556 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:11] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:13,137 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:13] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:13,473 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:13] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:38,684 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:38] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:10:38,685 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:38] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:10:38,933 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:38] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:38,993 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:38] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:10:51,814 - INFO - 127.0.0.1 - - [30/Jun/2025 13:10:51] "OPTIONS /chat HTTP/1.1" 200 -
+2025-06-30 13:11:21,222 - INFO - 127.0.0.1 - - [30/Jun/2025 13:11:21] "POST /chat HTTP/1.1" 200 -
+2025-06-30 13:11:25,833 - INFO - 127.0.0.1 - - [30/Jun/2025 13:11:25] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:11:25,835 - INFO - 127.0.0.1 - - [30/Jun/2025 13:11:25] "OPTIONS /tools HTTP/1.1" 200 -
+2025-06-30 13:11:26,081 - INFO - 127.0.0.1 - - [30/Jun/2025 13:11:26] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:11:26,142 - INFO - 127.0.0.1 - - [30/Jun/2025 13:11:26] "GET /tools HTTP/1.1" 200 -
+2025-06-30 13:50:41,776 - INFO - Starting cleanup process...
+2025-06-30 13:50:41,779 - WARNING - Error closing session: Attempted to exit cancel scope in a different task than it was entered in
+2025-06-30 13:50:41,847 - WARNING - Error closing MCP client: Attempted to exit cancel scope in a different task than it was entered in
