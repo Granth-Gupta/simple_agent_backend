@@ -4,9 +4,11 @@ import logging
 import json
 from typing import Optional, Dict, List, Any
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, validator
 import threading
 import warnings
 import sys
@@ -51,6 +53,12 @@ class ConfigurationError(Exception):
 class ChatRequest(BaseModel):
     message: str
     history: List[Dict] = []
+    
+    @validator('message')
+    def message_must_not_be_empty(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Message cannot be empty or whitespace only')
+        return v
 
 class ChatResponse(BaseModel):
     success: bool = True
@@ -335,6 +343,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Custom exception handler for validation errors
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handle validation errors and return appropriate error messages"""
+    for error in exc.errors():
+        if error.get("type") == "value_error" and "empty" in str(error.get("msg", "")):
+            return JSONResponse(
+                status_code=400,
+                content={"detail": "Empty message"}
+            )
+    
+    # Default validation error response
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
+
 
 async def run_async_task(coro):
     """Run async function safely"""
@@ -364,9 +389,7 @@ async def get_tools():
 async def chat(request: ChatRequest):
     """Main chat endpoint"""
     try:
-        if not request.message.strip():
-            raise HTTPException(status_code=400, detail="Empty message")
-        
+        # Pydantic validation will handle empty message check automatically
         # Check if agent is initialized
         if not agent._initialized:
             return ChatResponse(
